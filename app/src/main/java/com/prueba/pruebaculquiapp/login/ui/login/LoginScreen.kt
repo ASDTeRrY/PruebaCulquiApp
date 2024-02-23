@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -36,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -52,7 +54,6 @@ fun LoginScreen(navController: NavHostController, email: String) {
     Background()
     Header()
     Body(navController)
-
 }
 
 @Composable
@@ -77,22 +78,19 @@ fun Body(navController: NavHostController) {
             )
             Card(
                 modifier = Modifier
-                    .fillMaxSize()
                     .padding(top = 15.dp, start = 10.dp, bottom = 25.dp, end = 10.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.DarkGray.copy(alpha = 0.75f)),
             ) {
                 Column(
                     modifier = Modifier
-                        .fillMaxSize()
                         .padding(
                             top = 20.dp,
-                            bottom = 10.dp,
-                            start = 15.dp,
-                            end = 15.dp
+                            start = 20.dp,
+                            end = 20.dp
                         )
-                        .background(Color.Red)
                 ) {
                     Row(
+                        verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .fillMaxWidth()
                             .fillMaxHeight(0.20f)
@@ -100,13 +98,15 @@ fun Body(navController: NavHostController) {
                         Image(
                             painter = painterResource(id = R.drawable.background),
                             contentDescription = "LoginIcono",
-                            modifier = Modifier.fillMaxSize(0.2f).clip(CircleShape)
-                            
+                            modifier = Modifier.width(75.dp).height(75.dp).clip(CircleShape),
+                            contentScale = ContentScale.Crop,
+                            alignment = Alignment.TopCenter
+
                         )
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(start = 15.dp),
+                                .padding(start = 10.dp),
                             verticalArrangement = Arrangement.Center
                         ) {
                             Text(text = "Jane Down", color = Color.White,  fontWeight = FontWeight.Bold,)
@@ -128,7 +128,7 @@ fun Body(navController: NavHostController) {
                         var text by remember { mutableStateOf(TextFieldValue("")) }
                         TextField(
                             value = text,
-                            label = { Text(text = "Email") },
+                            label = { Text(text = "Password") },
                             onValueChange = { text = it },
                             colors = TextFieldDefaults.colors(
                                 focusedIndicatorColor = Color.Transparent,
@@ -151,131 +151,15 @@ fun Body(navController: NavHostController) {
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(50.dp)
+                            .height(55.dp)
                     )
                     {
-                        Text(text = "Continue")
+                        Text(text = "Continue", fontSize = 18.sp)
                     }
-                    Spacer(modifier = Modifier.height(paddingSpacer))
-                    Text(
-                        text = "Or",
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        color = Color.White,
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(modifier = Modifier.height(paddingSpacer))
-                    Button(
-                        onClick = { },
-                        shape = RoundedCornerShape(10.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.White
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp)
-                    )
-                    {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxSize()
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.facebook),
-                                contentDescription = "Facebook",
-                            )
-                            Text(
-                                text = "Continue with Facebook",
-                                textAlign = TextAlign.Center,
-                                color = Color.Black,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 17.sp,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(top = 5.dp)
-                            )
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(paddingSpacer))
-                    Button(
-                        onClick = { },
-                        shape = RoundedCornerShape(10.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.White
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp)
-                    )
-                    {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxSize()
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.google),
-                                contentDescription = "Google",
-                            )
-                            Text(
-                                text = "Continue with Google",
-                                textAlign = TextAlign.Center,
-                                color = Color.Black,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 17.sp,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(top = 5.dp)
-                            )
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(paddingSpacer))
-                    Button(
-                        onClick = { },
-                        shape = RoundedCornerShape(10.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.White
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp)
-                    )
-                    {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxSize()
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.apple),
-                                contentDescription = "Apple",
-                            )
-                            Text(
-                                text = "Continue with Apple",
-                                textAlign = TextAlign.Center,
-                                color = Color.Black,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 17.sp,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(top = 5.dp)
-                            )
-                        }
-                    }
+
                     Spacer(modifier = Modifier.height(25.dp))
-                    Row {
-                        Text(
-                            text = "Don't have an account?",
-                            color = Color.White,
-                            textAlign = TextAlign.Center
-                        )
-                        Text(
-                            text = " Sign up",
-                            color = colorResource(R.color.teal_700),
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(paddingSpacer))
                     Text(
-                        text = "Forgot your password",
+                        text = "Forgot your password?",
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(50.dp),

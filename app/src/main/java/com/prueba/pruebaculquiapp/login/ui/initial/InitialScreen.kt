@@ -3,6 +3,7 @@ package com.prueba.pruebaculquiapp.login.ui.initial
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -55,13 +56,13 @@ fun InitialScreen(navController: NavHostController) {
 @Composable
 fun Body(navController: NavHostController) {
     var isTextFieldFocused by remember { mutableStateOf(false) }
-    val paddingSpacer = 15.dp
+    val paddingSpacer = 20.dp
 
     Box {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.80f)
+                .fillMaxHeight(0.85f)
                 .align(Alignment.BottomCenter)
         ) {
             Text(
@@ -127,10 +128,10 @@ fun Body(navController: NavHostController) {
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(50.dp)
+                            .height(55.dp)
                     )
                     {
-                        Text(text = "Continue")
+                        Text(text = "Continue", fontSize = 18.sp)
                     }
                     Spacer(modifier = Modifier.height(paddingSpacer))
                     Text(
@@ -149,12 +150,14 @@ fun Body(navController: NavHostController) {
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(50.dp)
+                            .height(55.dp)
                     )
                     {
                         Row(
+                            verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
                                 .fillMaxSize()
+
                         ) {
                             Image(
                                 painter = painterResource(id = R.drawable.facebook),
@@ -165,10 +168,9 @@ fun Body(navController: NavHostController) {
                                 textAlign = TextAlign.Center,
                                 color = Color.Black,
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 17.sp,
+                                fontSize = 18.sp,
                                 modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(top = 5.dp)
+                                    .fillMaxSize().padding(top = 8.dp)
                             )
                         }
                     }
@@ -181,7 +183,7 @@ fun Body(navController: NavHostController) {
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(50.dp)
+                            .height(55.dp)
                     )
                     {
                         Row(
@@ -197,10 +199,10 @@ fun Body(navController: NavHostController) {
                                 textAlign = TextAlign.Center,
                                 color = Color.Black,
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 17.sp,
+                                fontSize = 18.sp,
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .padding(top = 5.dp)
+                                    .padding(top = 8.dp)
                             )
                         }
                     }
@@ -213,7 +215,7 @@ fun Body(navController: NavHostController) {
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(50.dp)
+                            .height(55.dp)
                     )
                     {
                         Row(
@@ -229,10 +231,10 @@ fun Body(navController: NavHostController) {
                                 textAlign = TextAlign.Center,
                                 color = Color.Black,
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 17.sp,
+                                fontSize = 18.sp,
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .padding(top = 5.dp)
+                                    .padding(top = 8.dp)
                             )
                         }
                     }
@@ -246,12 +248,15 @@ fun Body(navController: NavHostController) {
                         Text(
                             text = " Sign up",
                             color = colorResource(R.color.teal_700),
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.clickable {
+                                navController.navigate(Routes.SignUp.createRoute("cesar.rodrigezL@hotmail.com"))
+                            }
                         )
                     }
                     Spacer(modifier = Modifier.height(paddingSpacer))
                     Text(
-                        text = "Forgot your password",
+                        text = "Forgot your password?",
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(50.dp),

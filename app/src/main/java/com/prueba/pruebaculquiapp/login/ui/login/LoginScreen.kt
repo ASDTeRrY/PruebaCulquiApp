@@ -3,6 +3,7 @@ package com.prueba.pruebaculquiapp.login.ui.login
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
@@ -28,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,7 +44,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -50,15 +56,23 @@ import com.prueba.pruebaculquiapp.R
 import com.prueba.pruebaculquiapp.Routes
 
 @Composable
-fun LoginScreen(navController: NavHostController, email: String) {
+fun LoginScreen(loginViewModel: LoginViewModel, navController: NavHostController, email: String) {
+    initialLogin(loginViewModel, email)
     Background()
     Header()
-    Body(navController)
+    Body(loginViewModel, navController, email)
+}
+
+fun initialLogin(loginViewModel: LoginViewModel, email: String) {
+    loginViewModel.getUser(email)
 }
 
 @Composable
-fun Body(navController: NavHostController) {
+fun Body(loginViewModel: LoginViewModel, navController: NavHostController, email: String) {
+    val userModel by loginViewModel.userState.collectAsState()
     var isTextFieldFocused by remember { mutableStateOf(false) }
+    var isButtonEnable by remember { mutableStateOf(false) }
+    var passwordVisibility by remember { mutableStateOf(false) }
     val paddingSpacer = 15.dp
     Box {
         Column(
@@ -98,7 +112,10 @@ fun Body(navController: NavHostController) {
                         Image(
                             painter = painterResource(id = R.drawable.background),
                             contentDescription = "LoginIcono",
-                            modifier = Modifier.width(75.dp).height(75.dp).clip(CircleShape),
+                            modifier = Modifier
+                                .width(75.dp)
+                                .height(75.dp)
+                                .clip(CircleShape),
                             contentScale = ContentScale.Crop,
                             alignment = Alignment.TopCenter
 
@@ -109,8 +126,12 @@ fun Body(navController: NavHostController) {
                                 .padding(start = 10.dp),
                             verticalArrangement = Arrangement.Center
                         ) {
-                            Text(text = "Jane Down", color = Color.White,  fontWeight = FontWeight.Bold,)
-                            Text(text = "Cesar.Rodriguezl@hotmail.com", color = Color.White)
+                            Text(
+                                text = "${userModel?.firstName} ${userModel?.lastName}",
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
+                            )
+                            Text(text = email, color = Color.White)
 
                         }
                     }
@@ -130,11 +151,27 @@ fun Body(navController: NavHostController) {
                             value = text,
                             label = { Text(text = "Password") },
                             onValueChange = { text = it },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                            singleLine = true,
+                            maxLines = 1,
+                            trailingIcon = {
+                                Text(
+                                    text = if (passwordVisibility) "Hide" else "View",
+                                    textAlign = TextAlign.End,
+                                    modifier = Modifier.padding(end = 15.dp).clickable {
+                                        passwordVisibility = !passwordVisibility
+                                    })
+                            },
+                            visualTransformation = if (passwordVisibility) {
+                                VisualTransformation.None
+                            } else {
+                                PasswordVisualTransformation()
+                            },
                             colors = TextFieldDefaults.colors(
                                 focusedIndicatorColor = Color.Transparent,
                                 unfocusedIndicatorColor = Color.Transparent
                             ),
-                            modifier = Modifier.onFocusChanged {
+                            modifier = Modifier.fillMaxWidth().onFocusChanged {
                                 isTextFieldFocused = it.isFocused
                             }
                         )

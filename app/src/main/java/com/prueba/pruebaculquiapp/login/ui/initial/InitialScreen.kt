@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
@@ -26,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,9 +39,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -47,15 +49,22 @@ import com.prueba.pruebaculquiapp.R
 import com.prueba.pruebaculquiapp.Routes
 
 @Composable
-fun InitialScreen(navController: NavHostController) {
+fun InitialScreen(initialViewModel: InitialViewModel, navController: NavHostController) {
+    iniData(initialViewModel)
     Background()
     Header()
-    Body(navController)
+    Body(navController, initialViewModel)
+}
+
+private fun iniData(initialViewModel: InitialViewModel) {
+    initialViewModel.initialData()
 }
 
 @Composable
-fun Body(navController: NavHostController) {
+fun Body(navController: NavHostController, initialViewModel: InitialViewModel) {
     var isTextFieldFocused by remember { mutableStateOf(false) }
+    val emailText by initialViewModel.textStateFlow.collectAsState()
+    val isBtnEnable by initialViewModel.isBtnEnable.collectAsState(initial = false)
     val paddingSpacer = 20.dp
 
     Box {
@@ -102,11 +111,13 @@ fun Body(navController: NavHostController) {
                             .height(55.dp)
                     )
                     {
-                        var text by remember { mutableStateOf(TextFieldValue("")) }
                         TextField(
-                            value = text,
+                            value = emailText,
                             label = { Text(text = "Email") },
-                            onValueChange = { text = it },
+                            singleLine = true,
+                            maxLines = 1,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                            onValueChange = { initialViewModel.onEmailChange(it)},
                             colors = TextFieldDefaults.colors(
                                 focusedIndicatorColor = Color.Transparent,
                                 unfocusedIndicatorColor = Color.Transparent
@@ -120,11 +131,13 @@ fun Body(navController: NavHostController) {
                     Spacer(modifier = Modifier.height(paddingSpacer))
                     Button(
                         onClick = {
-                            navController.navigate(Routes.Login.createRoute("cesar.rodrigezL@hotmail.com"))
+                            navController.navigate(Routes.Login.createRoute(emailText))
                         },
+                        enabled = isBtnEnable,
                         shape = RoundedCornerShape(10.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = colorResource(R.color.teal_700)
+                            containerColor = colorResource(R.color.teal_700),
+                            disabledContainerColor = colorResource(R.color.btn_disable)
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
@@ -170,7 +183,8 @@ fun Body(navController: NavHostController) {
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 18.sp,
                                 modifier = Modifier
-                                    .fillMaxSize().padding(top = 8.dp)
+                                    .fillMaxSize()
+                                    .padding(top = 8.dp)
                             )
                         }
                     }
@@ -250,7 +264,7 @@ fun Body(navController: NavHostController) {
                             color = colorResource(R.color.teal_700),
                             textAlign = TextAlign.Center,
                             modifier = Modifier.clickable {
-                                navController.navigate(Routes.SignUp.createRoute("cesar.rodrigezL@hotmail.com"))
+                                navController.navigate(Routes.SignUp.createRoute(emailText))
                             }
                         )
                     }

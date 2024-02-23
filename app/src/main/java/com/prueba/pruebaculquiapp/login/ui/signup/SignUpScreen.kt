@@ -3,6 +3,7 @@ package com.prueba.pruebaculquiapp.login.ui.signup
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,10 +14,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
@@ -28,20 +28,21 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -50,16 +51,31 @@ import com.prueba.pruebaculquiapp.R
 import com.prueba.pruebaculquiapp.Routes
 
 @Composable
-fun SignUpScreen(navController: NavHostController, email: String) {
+fun SignUpScreen(
+    signUpViewModel: SignUpViewModel,
+    navController: NavHostController,
+    email: String
+) {
+    initialSignUp(signUpViewModel, email)
     Background()
     Header()
-    Body(navController)
+    Body(signUpViewModel, navController, email)
+}
+
+fun initialSignUp(signUpViewModel: SignUpViewModel, email: String) {
+    signUpViewModel.getUser(email)
 }
 
 @Composable
-fun Body(navController: NavHostController) {
+fun Body(signUpViewModel: SignUpViewModel, navController: NavHostController, email: String) {
+    val userState by signUpViewModel.userState.collectAsState()
+    val emailText by signUpViewModel.emailStateFlow.collectAsState()
+    val passwordText by signUpViewModel.passwordStateFlow.collectAsState()
     var isTextFieldFocused by remember { mutableStateOf(false) }
+    var passwordVisibility by remember { mutableStateOf(false) }
     val paddingSpacer = 20.dp
+
+
     Box {
         Column(
             modifier = Modifier
@@ -99,7 +115,7 @@ fun Body(navController: NavHostController) {
                         color = Color.White,
                     )
                     Text(
-                        text = "Cesar.Rodriguezl@hotmail.com",
+                        text = email,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
@@ -118,11 +134,10 @@ fun Body(navController: NavHostController) {
                             .height(55.dp)
                     )
                     {
-                        var text by remember { mutableStateOf(TextFieldValue("")) }
                         TextField(
-                            value = text,
+                            value = "${userState?.firstName} ${userState?.lastName}",
                             label = { Text(text = "Name") },
-                            onValueChange = { text = it },
+                            onValueChange = { signUpViewModel.onSignupChange(it, passwordText) },
                             colors = TextFieldDefaults.colors(
                                 focusedIndicatorColor = Color.Transparent,
                                 unfocusedIndicatorColor = Color.Transparent
@@ -145,18 +160,37 @@ fun Body(navController: NavHostController) {
                             .height(55.dp)
                     )
                     {
-                        var text by remember { mutableStateOf(TextFieldValue("")) }
                         TextField(
-                            value = text,
+                            value = passwordText,
                             label = { Text(text = "Password") },
-                            onValueChange = { text = it },
+                            onValueChange = { signUpViewModel.onSignupChange(emailText, it) },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                            singleLine = true,
+                            maxLines = 1,
+                            trailingIcon = {
+                                Text(
+                                    text = if (passwordVisibility) "Hide" else "View",
+                                    textAlign = TextAlign.End,
+                                    modifier = Modifier
+                                        .padding(end = 15.dp)
+                                        .clickable {
+                                            passwordVisibility = !passwordVisibility
+                                        })
+                            },
+                            visualTransformation = if (passwordVisibility) {
+                                VisualTransformation.None
+                            } else {
+                                PasswordVisualTransformation()
+                            },
                             colors = TextFieldDefaults.colors(
                                 focusedIndicatorColor = Color.Transparent,
                                 unfocusedIndicatorColor = Color.Transparent
                             ),
-                            modifier = Modifier.onFocusChanged {
-                                isTextFieldFocused = it.isFocused
-                            }
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .onFocusChanged {
+                                    isTextFieldFocused = it.isFocused
+                                }
                         )
 
                     }
@@ -168,7 +202,7 @@ fun Body(navController: NavHostController) {
                     ) {
                         Text(
                             text = "By selecting Agree and continue below,",
-                            fontSize = 15.sp,
+                            fontSize = 16.sp,
                             fontWeight = FontWeight.Light,
                             color = Color.White,
                         )
@@ -191,7 +225,7 @@ fun Body(navController: NavHostController) {
                     Spacer(modifier = Modifier.height(paddingSpacer))
                     Button(
                         onClick = {
-                            navController.navigate(Routes.Login.createRoute("cesar.rodrigezL@hotmail.com"))
+                            signUpViewModel.sendRegister(email, passwordText)
                         },
                         shape = RoundedCornerShape(10.dp),
                         colors = ButtonDefaults.buttonColors(

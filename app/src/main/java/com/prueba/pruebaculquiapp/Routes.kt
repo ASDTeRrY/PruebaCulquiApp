@@ -10,7 +10,5 @@ sealed class Routes(val route: String) {
         fun createRoute(email: String) = "signupScreen/$email"
     }
 
-    data object Home : Routes("homeScreen?email={email}") {
-        fun createRoute(email: String) = "homeScreen?email={$email}"
-    }
+    data object Home : Routes("homeScreen")
 }

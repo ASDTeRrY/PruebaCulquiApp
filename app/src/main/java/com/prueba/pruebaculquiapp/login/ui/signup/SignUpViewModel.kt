@@ -17,8 +17,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SignUpViewModel @Inject constructor(private val getUserUseCase: GetUserUseCase, private val userRegisterUseCase: UserRegisterUseCase): ViewModel() {
 
-    private var _state = MutableStateFlow<InitialState>(InitialState.Loading)
-    val state: StateFlow<InitialState> = _state
+    private var _state = MutableStateFlow<SignUpState>(SignUpState.Loading)
+    val state: StateFlow<SignUpState> = _state
 
     private var _userState = MutableStateFlow<UserModel?>(null)
     val userState: StateFlow<UserModel?> = _userState
@@ -39,9 +39,9 @@ class SignUpViewModel @Inject constructor(private val getUserUseCase: GetUserUse
     }
     fun sendRegister(email: String, password: String){
         viewModelScope.launch{
-            _state.value = InitialState.Loading
+            _state.value = SignUpState.Loading
             val result = withContext(Dispatchers.IO) { userRegisterUseCase(email, password) }
-            _state.value = InitialState.Success(result)
+            _state.value = SignUpState.Success(result)
         }
     }
 }

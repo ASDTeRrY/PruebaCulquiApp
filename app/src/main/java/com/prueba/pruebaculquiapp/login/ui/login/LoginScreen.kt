@@ -46,7 +46,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -69,11 +68,24 @@ fun initialLogin(loginViewModel: LoginViewModel, email: String) {
 
 @Composable
 fun Body(loginViewModel: LoginViewModel, navController: NavHostController, email: String) {
+    val state by loginViewModel.state.collectAsState()
     val userModel by loginViewModel.userState.collectAsState()
+    val passwordText by loginViewModel.passwordStateFlow.collectAsState()
     var isTextFieldFocused by remember { mutableStateOf(false) }
     var isButtonEnable by remember { mutableStateOf(false) }
     var passwordVisibility by remember { mutableStateOf(false) }
     val paddingSpacer = 15.dp
+
+    when (state) {
+        is LoginState.Loading -> {
+        }
+        is LoginState.Success -> {
+            navController.navigate(Routes.Home.route)
+        }
+        is LoginState.Error -> {
+        }
+    }
+
     Box {
         Column(
             modifier = Modifier
@@ -146,11 +158,11 @@ fun Body(loginViewModel: LoginViewModel, navController: NavHostController, email
                             .height(55.dp)
                     )
                     {
-                        var text by remember { mutableStateOf(TextFieldValue("")) }
+
                         TextField(
-                            value = text,
+                            value = passwordText,
                             label = { Text(text = "Password") },
-                            onValueChange = { text = it },
+                            onValueChange = { loginViewModel.onLoginChange(it) },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                             singleLine = true,
                             maxLines = 1,
@@ -180,7 +192,7 @@ fun Body(loginViewModel: LoginViewModel, navController: NavHostController, email
                     Spacer(modifier = Modifier.height(paddingSpacer))
                     Button(
                         onClick = {
-                            navController.navigate(Routes.Login.createRoute("cesar.rodrigezL@hotmail.com"))
+                            loginViewModel.sendLogin(email, passwordText)
                         },
                         shape = RoundedCornerShape(10.dp),
                         colors = ButtonDefaults.buttonColors(

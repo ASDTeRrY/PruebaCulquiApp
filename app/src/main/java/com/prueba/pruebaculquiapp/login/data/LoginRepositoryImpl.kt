@@ -4,7 +4,7 @@ import android.util.Log
 import com.prueba.pruebaculquiapp.login.data.localDB.LoginDataBaseModule
 import com.prueba.pruebaculquiapp.login.data.localDB.entity.toModel
 import com.prueba.pruebaculquiapp.login.data.remote.LoginApiService
-import com.prueba.pruebaculquiapp.login.data.remote.request.SignUpRequest
+import com.prueba.pruebaculquiapp.login.data.remote.request.UserRequest
 import com.prueba.pruebaculquiapp.login.domain.LoginRepository
 import com.prueba.pruebaculquiapp.login.domain.model.UserModel
 import javax.inject.Inject
@@ -36,8 +36,9 @@ class LoginRepositoryImpl @Inject constructor(
         loginDB.getUser().first { it.email == email }.toModel()
 
     override suspend fun userRegister(email: String, password: String): String {
-        val request = SignUpRequest(email, password)
-        runCatching {apiService.userRegister(request)
+        val request = UserRequest(email, password)
+        runCatching {
+            apiService.userRegister(request)
         }.onSuccess {
             Log.i("ASD.sLyon", "Se registro el usuario correctamente")
             return "Success"
@@ -45,5 +46,18 @@ class LoginRepositoryImpl @Inject constructor(
             Log.i("ASD.sLyon", "Error al registrar Usuario ${it.message}")
         }
         return "Error al Registar Usuario"
+    }
+
+    override suspend fun login(email: String, password: String): String {
+        val request = UserRequest(email, password)
+        runCatching {
+            apiService.userLogin(request)
+        }.onSuccess {
+            Log.i("ASD.sLyon", "Se realizo el login correctamente")
+            return "Success"
+        }.onFailure {
+            Log.i("ASD.sLyon", "Error al realizar el login ${it.message}")
+        }
+        return "Error al realizar el login"
     }
 }

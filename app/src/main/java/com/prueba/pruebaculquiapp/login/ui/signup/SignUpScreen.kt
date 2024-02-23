@@ -1,5 +1,6 @@
 package com.prueba.pruebaculquiapp.login.ui.signup
 
+import android.opengl.Visibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -23,6 +24,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -69,13 +71,22 @@ fun initialSignUp(signUpViewModel: SignUpViewModel, email: String) {
 @Composable
 fun Body(signUpViewModel: SignUpViewModel, navController: NavHostController, email: String) {
     val userState by signUpViewModel.userState.collectAsState()
+    val state by signUpViewModel.state.collectAsState()
     val emailText by signUpViewModel.emailStateFlow.collectAsState()
     val passwordText by signUpViewModel.passwordStateFlow.collectAsState()
     var isTextFieldFocused by remember { mutableStateOf(false) }
     var passwordVisibility by remember { mutableStateOf(false) }
     val paddingSpacer = 20.dp
 
-
+    when (state) {
+        is SignUpState.Loading -> {
+        }
+        is SignUpState.Success -> {
+            navController.navigate(Routes.Home.route)
+        }
+        is SignUpState.Error -> {
+        }
+    }
     Box {
         Column(
             modifier = Modifier

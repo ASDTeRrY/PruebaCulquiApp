@@ -14,6 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.prueba.pruebaculquiapp.home.ui.home.HomeScreen
+import com.prueba.pruebaculquiapp.home.ui.home.HomeViewModel
 import com.prueba.pruebaculquiapp.login.ui.initial.InitialScreen
 import com.prueba.pruebaculquiapp.login.ui.initial.InitialViewModel
 import com.prueba.pruebaculquiapp.login.ui.login.LoginScreen
@@ -29,12 +30,12 @@ class MainActivity : ComponentActivity() {
     private val initialViewModel: InitialViewModel by viewModels()
     private val loginViewModel: LoginViewModel by viewModels()
     private val signUpViewModel: SignUpViewModel by viewModels()
+    private val homeViewModel: HomeViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             PruebaCulquiAppTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -44,7 +45,12 @@ class MainActivity : ComponentActivity() {
                         navController = navigationController,
                         startDestination = Routes.Initial.route
                     ) {
-                        composable(Routes.Initial.route) { InitialScreen(initialViewModel, navController = navigationController) }
+                        composable(Routes.Initial.route) {
+                            InitialScreen(
+                                initialViewModel,
+                                navController = navigationController
+                            )
+                        }
                         composable(
                             Routes.Login.route,
                             arguments = listOf(navArgument("email") { type = NavType.StringType })
@@ -65,12 +71,10 @@ class MainActivity : ComponentActivity() {
                                 backStackEntry.arguments?.getString("email")!!
                             )
                         }
-                        composable(
-                            Routes.Home.route,
-                            arguments = listOf(navArgument("email") { type = NavType.StringType })
-                        ) { backStackEntry ->
+                        composable(Routes.Home.route) {
                             HomeScreen(
-                                navigationController
+                                homeViewModel,
+                                navController = navigationController
                             )
                         }
 

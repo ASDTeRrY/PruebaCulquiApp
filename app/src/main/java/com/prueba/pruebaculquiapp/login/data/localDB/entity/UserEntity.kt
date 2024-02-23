@@ -30,3 +30,15 @@ fun UserEntity.toModel(): UserModel {
         avatar
     )
 }
+
+fun List<UserEntity>.toUserModelList(): List<UserModel> {
+    return this.map { userEntity ->
+        UserModel(
+            id = userEntity.id,
+            email = userEntity.email,
+            firstName = userEntity.firstName,
+            lastName = userEntity.lastName,
+            avatar = userEntity.avatar
+        )
+    }
+}

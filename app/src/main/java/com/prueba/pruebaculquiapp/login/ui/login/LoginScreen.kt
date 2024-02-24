@@ -30,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -56,16 +57,16 @@ import com.prueba.pruebaculquiapp.Routes
 
 @Composable
 fun LoginScreen(loginViewModel: LoginViewModel, navController: NavHostController, email: String) {
-    initialLogin(loginViewModel, email)
+
     Background()
     Header(navController)
     Body(loginViewModel, navController, email)
+
+    LaunchedEffect(true) {
+        loginViewModel.getUser(email)
+    }
 }
 
-fun initialLogin(loginViewModel: LoginViewModel, email: String) {
-    loginViewModel.getUser(email)
-
-}
 
 @Composable
 fun Body(loginViewModel: LoginViewModel, navController: NavHostController, email: String) {

@@ -29,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -55,16 +56,18 @@ import kotlinx.coroutines.launch
 @Composable
 fun InitialScreen(initialViewModel: InitialViewModel, navController: NavHostController) {
 
-    initialViewModel.initialData()
     Background()
     Header()
     Body(navController, initialViewModel)
     SearchUser(initialViewModel, navController)
+
+    LaunchedEffect(true) {
+        initialViewModel.initialData()
+    }
 }
 
 @Composable
 fun Body(navController: NavHostController, initialViewModel: InitialViewModel) {
-
     var isTextFieldFocused by remember { mutableStateOf(false) }
     val emailText by initialViewModel.textStateFlow.collectAsState()
     val isBtnEnable by initialViewModel.isBtnEnable.collectAsState(initial = false)
@@ -291,6 +294,7 @@ fun Body(navController: NavHostController, initialViewModel: InitialViewModel) {
 
 @Composable
 fun SearchUser(initialViewModel: InitialViewModel, navController: NavHostController) {
+    var nextPage by remember { mutableStateOf(false) }
     val userState by initialViewModel.userState.collectAsState()
     val snackbarHostState = rememberSnackbarHostState()
     val coroutineScope = rememberCoroutineScope()
@@ -299,7 +303,10 @@ fun SearchUser(initialViewModel: InitialViewModel, navController: NavHostControl
          UserState.Loading -> {
         }
         is UserState.Success -> {
-            navController.navigate(Routes.SignUp.createRoute(email = state.user.email))
+            if(!nextPage){
+                navController.navigate(Routes.Login.createRoute(email = state.user.email))
+                nextPage = true
+            }
         }
         is UserState.Error -> {
 

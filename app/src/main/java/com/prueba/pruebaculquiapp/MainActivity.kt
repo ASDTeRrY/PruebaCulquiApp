@@ -72,7 +72,7 @@ fun InitialMainApp(
         ) { backStackEntry ->
             LoginScreen(
                 loginViewModel,
-                navigationController,
+                navController = navigationController,
                 backStackEntry.arguments?.getString("email")!!
             )
         }
@@ -82,7 +82,7 @@ fun InitialMainApp(
         ) { backStackEntry ->
             SignUpScreen(
                 signUpViewModel,
-                navigationController,
+                navController = navigationController,
                 backStackEntry.arguments?.getString("email")!!
             )
         }

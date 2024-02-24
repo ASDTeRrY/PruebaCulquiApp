@@ -28,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -56,14 +57,14 @@ fun SignUpScreen(
     navController: NavHostController,
     email: String
 ) {
-    initialSignUp(signUpViewModel, email)
+
     Background()
     Header(navController)
     Body(signUpViewModel, navController, email)
-}
 
-fun initialSignUp(signUpViewModel: SignUpViewModel, email: String) {
-    signUpViewModel.getUser(email)
+    LaunchedEffect(true) {
+        signUpViewModel.getUser(email)
+    }
 }
 
 @Composable
@@ -277,7 +278,7 @@ fun Header(navController: NavHostController) {
             contentDescription = "back",
             tint = Color.White,
             modifier = Modifier.clickable {
-                navController.navigateUp()
+                navController.popBackStack()
             }
         )
     }

@@ -37,8 +37,10 @@ class LoginRepositoryImpl @Inject constructor(
     override suspend fun getUser(email: String): UserModel? {
         runCatching {loginDB.getUser(email)
         }.onSuccess {
+            Log.i("ASD.sLyon", "Se Encontro el usuario en la BD")
             return it
         }.onFailure {
+            Log.i("ASD.sLyon", "Se No se encontro el usuario en la BD")
             return null
         }
         return null

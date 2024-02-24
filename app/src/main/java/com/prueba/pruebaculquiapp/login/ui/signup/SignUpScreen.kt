@@ -1,6 +1,5 @@
 package com.prueba.pruebaculquiapp.login.ui.signup
 
-import android.opengl.Visibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -24,7 +23,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -60,7 +58,7 @@ fun SignUpScreen(
 ) {
     initialSignUp(signUpViewModel, email)
     Background()
-    Header()
+    Header(navController)
     Body(signUpViewModel, navController, email)
 }
 
@@ -268,7 +266,7 @@ fun Body(signUpViewModel: SignUpViewModel, navController: NavHostController, ema
 }
 
 @Composable
-fun Header() {
+fun Header(navController: NavHostController) {
     Box(
         Modifier
             .fillMaxSize()
@@ -278,6 +276,9 @@ fun Header() {
             imageVector = Icons.Default.KeyboardArrowLeft,
             contentDescription = "back",
             tint = Color.White,
+            modifier = Modifier.clickable {
+                navController.popBackStack()
+            }
         )
     }
 }

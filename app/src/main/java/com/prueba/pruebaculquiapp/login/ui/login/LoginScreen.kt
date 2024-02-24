@@ -58,12 +58,13 @@ import com.prueba.pruebaculquiapp.Routes
 fun LoginScreen(loginViewModel: LoginViewModel, navController: NavHostController, email: String) {
     initialLogin(loginViewModel, email)
     Background()
-    Header()
+    Header(navController)
     Body(loginViewModel, navController, email)
 }
 
 fun initialLogin(loginViewModel: LoginViewModel, email: String) {
     loginViewModel.getUser(email)
+
 }
 
 @Composable
@@ -224,7 +225,7 @@ fun Body(loginViewModel: LoginViewModel, navController: NavHostController, email
 }
 
 @Composable
-fun Header() {
+fun Header(navController: NavHostController) {
     Box(
         Modifier
             .fillMaxSize()
@@ -234,6 +235,9 @@ fun Header() {
             imageVector = Icons.Default.KeyboardArrowLeft,
             contentDescription = "back",
             tint = Color.White,
+            modifier = Modifier.clickable {
+                navController.popBackStack()
+            }
         )
     }
 }

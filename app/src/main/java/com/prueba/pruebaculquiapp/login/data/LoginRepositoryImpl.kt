@@ -3,10 +3,12 @@ package com.prueba.pruebaculquiapp.login.data
 import android.util.Log
 import com.prueba.pruebaculquiapp.login.data.localDB.LoginDataBaseModule
 import com.prueba.pruebaculquiapp.login.data.localDB.entity.toModel
+import com.prueba.pruebaculquiapp.login.data.localDB.entity.toUserModelList
 import com.prueba.pruebaculquiapp.login.data.remote.LoginApiService
 import com.prueba.pruebaculquiapp.login.data.remote.request.UserRequest
 import com.prueba.pruebaculquiapp.login.domain.LoginRepository
 import com.prueba.pruebaculquiapp.login.domain.model.UserModel
+import io.realm.kotlin.ext.isValid
 import javax.inject.Inject
 
 class LoginRepositoryImpl @Inject constructor(
@@ -32,8 +34,15 @@ class LoginRepositoryImpl @Inject constructor(
         return "Error en el servicio InitialData"
     }
 
-    override suspend fun getUser(email: String): UserModel =
-        loginDB.getUser().first { it.email == email }.toModel()
+    override suspend fun getUser(email: String): UserModel? {
+        runCatching {loginDB.getUser(email)
+        }.onSuccess {
+            return it
+        }.onFailure {
+            return null
+        }
+        return null
+    }
 
     override suspend fun userRegister(email: String, password: String): String {
         val request = UserRequest(email, password)

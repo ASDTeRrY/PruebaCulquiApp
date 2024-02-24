@@ -23,6 +23,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -31,6 +33,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,28 +43,27 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.prueba.pruebaculquiapp.R
 import com.prueba.pruebaculquiapp.Routes
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun InitialScreen(initialViewModel: InitialViewModel, navController: NavHostController) {
-    iniData(initialViewModel)
+    initialViewModel.initialData()
     Background()
     Header()
     Body(navController, initialViewModel)
-}
-
-private fun iniData(initialViewModel: InitialViewModel) {
-    initialViewModel.initialData()
+    SearchUser(initialViewModel, navController)
 }
 
 @Composable
 fun Body(navController: NavHostController, initialViewModel: InitialViewModel) {
+
     var isTextFieldFocused by remember { mutableStateOf(false) }
     val emailText by initialViewModel.textStateFlow.collectAsState()
     val isBtnEnable by initialViewModel.isBtnEnable.collectAsState(initial = false)
@@ -131,7 +133,7 @@ fun Body(navController: NavHostController, initialViewModel: InitialViewModel) {
                     Spacer(modifier = Modifier.height(paddingSpacer))
                     Button(
                         onClick = {
-                            navController.navigate(Routes.Login.createRoute(emailText))
+                            initialViewModel.getUser(emailText)
                         },
                         enabled = isBtnEnable,
                         shape = RoundedCornerShape(10.dp),
@@ -284,6 +286,38 @@ fun Body(navController: NavHostController, initialViewModel: InitialViewModel) {
         }
     }
 
+}
+
+@Composable
+fun SearchUser(initialViewModel: InitialViewModel, navController: NavHostController) {
+    val userState by initialViewModel.userState.collectAsState()
+    val snackbarHostState = rememberSnackbarHostState()
+    val coroutineScope = rememberCoroutineScope()
+
+    when (val state = userState) {
+         UserState.Loading -> {
+        }
+        is UserState.Success -> {
+            navController.navigate(Routes.SignUp.createRoute(email = state.user.email))
+        }
+        is UserState.Error -> {
+
+            fun showSnackbar(message: String) {
+                coroutineScope.launch {
+                    snackbarHostState.showSnackbar(message)
+                    delay(3000)
+                    snackbarHostState.currentSnackbarData?.dismiss()
+                }
+            }
+            showSnackbar("El usuario no se encuentra registrado")
+            SnackbarHost(snackbarHostState, modifier = Modifier.padding(top = 25.dp))
+        }
+    }
+}
+
+@Composable
+fun rememberSnackbarHostState(): SnackbarHostState {
+    return SnackbarHostState()
 }
 
 @Composable()

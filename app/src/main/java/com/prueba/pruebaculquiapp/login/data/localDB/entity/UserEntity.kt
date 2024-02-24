@@ -7,7 +7,7 @@ import io.realm.kotlin.types.annotations.PrimaryKey
 
 open class UserEntity() : RealmObject {
     @PrimaryKey
-    var id: Int = 0
+    var id: Int = 100
     var email: String = ""
     var firstName: String = ""
     var lastName: String = ""

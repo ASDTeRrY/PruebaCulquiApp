@@ -277,7 +277,7 @@ fun Header(navController: NavHostController) {
             contentDescription = "back",
             tint = Color.White,
             modifier = Modifier.clickable {
-                navController.popBackStack()
+                navController.navigateUp()
             }
         )
     }

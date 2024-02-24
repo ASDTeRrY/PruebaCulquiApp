@@ -7,6 +7,7 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -40,48 +41,58 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val navigationController = rememberNavController()
-                    NavHost(
-                        navController = navigationController,
-                        startDestination = Routes.Initial.route
-                    ) {
-                        composable(Routes.Initial.route) {
-                            InitialScreen(
-                                initialViewModel,
-                                navController = navigationController
-                            )
-                        }
-                        composable(
-                            Routes.Login.route,
-                            arguments = listOf(navArgument("email") { type = NavType.StringType })
-                        ) { backStackEntry ->
-                            LoginScreen(
-                                loginViewModel,
-                                navigationController,
-                                backStackEntry.arguments?.getString("email")!!
-                            )
-                        }
-                        composable(
-                            Routes.SignUp.route,
-                            arguments = listOf(navArgument("email") { type = NavType.StringType })
-                        ) { backStackEntry ->
-                            SignUpScreen(
-                                signUpViewModel,
-                                navigationController,
-                                backStackEntry.arguments?.getString("email")!!
-                            )
-                        }
-                        composable(Routes.Home.route) {
-                            HomeScreen(
-                                homeViewModel,
-                                navController = navigationController
-                            )
-                        }
-
-                    }
-
+                    InitialMainApp(initialViewModel, loginViewModel, signUpViewModel, homeViewModel)
                 }
             }
         }
     }
+}
+
+@Composable
+fun InitialMainApp(
+    initialViewModel: InitialViewModel,
+    loginViewModel: LoginViewModel,
+    signUpViewModel: SignUpViewModel,
+    homeViewModel: HomeViewModel
+) {
+    val navigationController = rememberNavController()
+    NavHost(
+        navController = navigationController,
+        startDestination = Routes.Initial.route
+    ) {
+        composable(Routes.Initial.route) {
+            InitialScreen(
+                initialViewModel,
+                navController = navigationController
+            )
+        }
+        composable(
+            Routes.Login.route,
+            arguments = listOf(navArgument("email") { type = NavType.StringType })
+        ) { backStackEntry ->
+            LoginScreen(
+                loginViewModel,
+                navigationController,
+                backStackEntry.arguments?.getString("email")!!
+            )
+        }
+        composable(
+            Routes.SignUp.route,
+            arguments = listOf(navArgument("email") { type = NavType.StringType })
+        ) { backStackEntry ->
+            SignUpScreen(
+                signUpViewModel,
+                navigationController,
+                backStackEntry.arguments?.getString("email")!!
+            )
+        }
+        composable(Routes.Home.route) {
+            HomeScreen(
+                homeViewModel,
+                navController = navigationController
+            )
+        }
+
+    }
+
 }

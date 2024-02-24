@@ -54,6 +54,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun InitialScreen(initialViewModel: InitialViewModel, navController: NavHostController) {
+
     initialViewModel.initialData()
     Background()
     Header()

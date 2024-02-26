@@ -61,8 +61,7 @@ fun LoginScreen(loginViewModel: LoginViewModel, navController: NavHostController
     Background()
     Header(navController)
     Body(loginViewModel, navController, email)
-
-    LaunchedEffect(true) {
+    LaunchedEffect(Unit) {
         loginViewModel.getUser(email)
     }
 }
@@ -74,7 +73,6 @@ fun Body(loginViewModel: LoginViewModel, navController: NavHostController, email
     val userModel by loginViewModel.userState.collectAsState()
     val passwordText by loginViewModel.passwordStateFlow.collectAsState()
     var isTextFieldFocused by remember { mutableStateOf(false) }
-    var isButtonEnable by remember { mutableStateOf(false) }
     var passwordVisibility by remember { mutableStateOf(false) }
     val paddingSpacer = 15.dp
 
@@ -172,9 +170,11 @@ fun Body(loginViewModel: LoginViewModel, navController: NavHostController, email
                                 Text(
                                     text = if (passwordVisibility) "Hide" else "View",
                                     textAlign = TextAlign.End,
-                                    modifier = Modifier.padding(end = 15.dp).clickable {
-                                        passwordVisibility = !passwordVisibility
-                                    })
+                                    modifier = Modifier
+                                        .padding(end = 15.dp)
+                                        .clickable {
+                                            passwordVisibility = !passwordVisibility
+                                        })
                             },
                             visualTransformation = if (passwordVisibility) {
                                 VisualTransformation.None
@@ -185,9 +185,11 @@ fun Body(loginViewModel: LoginViewModel, navController: NavHostController, email
                                 focusedIndicatorColor = Color.Transparent,
                                 unfocusedIndicatorColor = Color.Transparent
                             ),
-                            modifier = Modifier.fillMaxWidth().onFocusChanged {
-                                isTextFieldFocused = it.isFocused
-                            }
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .onFocusChanged {
+                                    isTextFieldFocused = it.isFocused
+                                }
                         )
 
                     }

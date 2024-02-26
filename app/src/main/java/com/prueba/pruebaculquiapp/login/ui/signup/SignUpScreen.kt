@@ -57,20 +57,18 @@ fun SignUpScreen(
     navController: NavHostController,
     email: String
 ) {
-
     Background()
     Header(navController)
     Body(signUpViewModel, navController, email)
-
-    LaunchedEffect(true) {
+    LaunchedEffect(Unit) {
         signUpViewModel.getUser(email)
     }
 }
 
 @Composable
 fun Body(signUpViewModel: SignUpViewModel, navController: NavHostController, email: String) {
-    val userState by signUpViewModel.userState.collectAsState()
     val state by signUpViewModel.state.collectAsState()
+    val userState by signUpViewModel.userState.collectAsState()
     val emailText by signUpViewModel.emailStateFlow.collectAsState()
     val passwordText by signUpViewModel.passwordStateFlow.collectAsState()
     var isTextFieldFocused by remember { mutableStateOf(false) }
@@ -257,11 +255,8 @@ fun Body(signUpViewModel: SignUpViewModel, navController: NavHostController, ema
                             .height(55.dp),
                         color = colorResource(id = R.color.teal_700),
                     )
-
                 }
-
             }
-
         }
     }
 }

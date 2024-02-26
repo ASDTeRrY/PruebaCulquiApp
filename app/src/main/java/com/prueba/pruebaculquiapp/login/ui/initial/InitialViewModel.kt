@@ -38,12 +38,14 @@ class InitialViewModel @Inject constructor(private val initialDataUseCase: GetIn
         }
     }
 
-    fun getUser(email: String){
+    fun getUser(email: String, btnLogin: Boolean){
         viewModelScope.launch {
             _userState.value = UserState.Loading
             val result = withContext(Dispatchers.IO) { getUserUseCase(email) }
             if (result != null) {
+                _isBtnEnable.value = btnLogin
                 _userState.value = UserState.Success(result)
+
             } else {
                 _userState.value = UserState.Error("El usuario no fue encontrado")
             }

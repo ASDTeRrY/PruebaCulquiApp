@@ -27,6 +27,9 @@ class LoginViewModel @Inject constructor(private val getUserUseCase: GetUserUseC
     private val _passwordStateFlow = MutableStateFlow("")
     val passwordStateFlow: StateFlow<String> = _passwordStateFlow
 
+    private val _btnClick = MutableStateFlow(true)
+    val btnClick: StateFlow<Boolean> = _btnClick
+
     fun sendLogin(email: String, password: String){
         viewModelScope.launch{
             _state.value = LoginState.Loading

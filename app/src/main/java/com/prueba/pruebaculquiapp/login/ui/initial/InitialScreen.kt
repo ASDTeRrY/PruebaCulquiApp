@@ -60,8 +60,7 @@ fun InitialScreen(initialViewModel: InitialViewModel, navController: NavHostCont
     Header()
     Body(navController, initialViewModel)
     SearchUser(initialViewModel, navController)
-
-    LaunchedEffect(true) {
+    LaunchedEffect(Unit) {
         initialViewModel.initialData()
     }
 }
@@ -123,7 +122,9 @@ fun Body(navController: NavHostController, initialViewModel: InitialViewModel) {
                             singleLine = true,
                             maxLines = 1,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                            onValueChange = { initialViewModel.onEmailChange(it)},
+                            onValueChange = {
+                                initialViewModel.onEmailChange(it)
+                            },
                             colors = TextFieldDefaults.colors(
                                 focusedIndicatorColor = Color.Transparent,
                                 unfocusedIndicatorColor = Color.Transparent
@@ -137,7 +138,7 @@ fun Body(navController: NavHostController, initialViewModel: InitialViewModel) {
                     Spacer(modifier = Modifier.height(paddingSpacer))
                     Button(
                         onClick = {
-                            initialViewModel.getUser(emailText)
+                            initialViewModel.getUser(emailText, true)
                         },
                         enabled = isBtnEnable,
                         shape = RoundedCornerShape(10.dp),
@@ -270,7 +271,7 @@ fun Body(navController: NavHostController, initialViewModel: InitialViewModel) {
                             color = colorResource(R.color.teal_700),
                             textAlign = TextAlign.Center,
                             modifier = Modifier.clickable {
-                                navController.navigate(Routes.SignUp.createRoute(emailText))
+                                initialViewModel.getUser(emailText, false)
                             }
                         )
                     }
@@ -282,34 +283,27 @@ fun Body(navController: NavHostController, initialViewModel: InitialViewModel) {
                             .height(50.dp),
                         color = colorResource(id = R.color.teal_700),
                     )
-
                 }
-
             }
-
         }
     }
-
 }
 
 @Composable
 fun SearchUser(initialViewModel: InitialViewModel, navController: NavHostController) {
-    var nextPage by remember { mutableStateOf(false) }
+    val btnClick by initialViewModel.isBtnEnable.collectAsState()
     val userState by initialViewModel.userState.collectAsState()
     val snackbarHostState = rememberSnackbarHostState()
     val coroutineScope = rememberCoroutineScope()
 
     when (val state = userState) {
-         UserState.Loading -> {
+        UserState.Loading -> {
         }
         is UserState.Success -> {
-            if(!nextPage){
-                navController.navigate(Routes.Login.createRoute(email = state.user.email))
-                nextPage = true
-            }
+            if (btnClick) navController.navigate(Routes.Login.createRoute(state.user.email))
+            else navController.navigate(Routes.SignUp.createRoute(state.user.email))
         }
         is UserState.Error -> {
-
             fun showSnackbar(message: String) {
                 coroutineScope.launch {
                     snackbarHostState.showSnackbar(message)
@@ -345,7 +339,6 @@ fun Background() {
                 .align(Alignment.TopEnd)
         )
     }
-
 }
 
 @Composable
